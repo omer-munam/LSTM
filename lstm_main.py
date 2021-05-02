@@ -1,6 +1,7 @@
 import pandas as pd
 import tensorflow.keras as keras
 import numpy as np
+from matplotlib import pyplot as plt
 
 def build_lstm(classes):
     n_timesteps, n_features, n_outputs = 240, 4, classes.shape[0]
@@ -19,12 +20,28 @@ def load_files():
 
 def process_dataset(trainX, trainY):
     trainX = trainX.to_numpy()
-    trainX = trainX.reshape(50,240,4)
+    trainX = trainX.reshape(26,240,4)
     return trainX, trainY
 
 def train_lstm(trainX, trainY, model):
-    verbose, epochs, batch_size = 1, 15, 64
-    model.fit(trainX, trainY, epochs=epochs, batch_size=batch_size, verbose=verbose)
+    verbose, epochs, batch_size = 1, 1500, 8
+    history = model.fit(trainX, trainY, epochs=epochs, batch_size=batch_size, verbose=verbose)
+    # plt.subplot(2,1,1)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['loss'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy/loss')
+    plt.xlabel('epoch')
+    plt.legend(['train accuracy', 'train loss'], loc='upper right')
+
+    # plt.subplot(2,1,2)
+    # plt.plot(history.history['val_accuracy'])
+    # plt.plot(history.history['val_loss'])
+    # plt.title('model accuracy')
+    # plt.ylabel('accuracy/loss')
+    # plt.xlabel('epoch')
+    # plt.legend(['test accuracy', 'test loss'], loc='upper right')
+    plt.show()
     return model
 
 if __name__ == "__main__":
@@ -33,5 +50,5 @@ if __name__ == "__main__":
     trainX, trainY = process_dataset(trainX,trainY)
     # print(model.summary())
     model = train_lstm(trainX, trainY, model)
-    model.save("test_model")
+    model.save("test_model.h5")
     # print(model.summary())
